@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <tuple>
+#include <map>
 
 #include <SFML/Graphics.hpp>
 #include "imgui.h"

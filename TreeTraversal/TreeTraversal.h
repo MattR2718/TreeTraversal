@@ -12,4 +12,6 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
+#include "algorithms.h"
+
 // TODO: Reference additional headers your program requires here.

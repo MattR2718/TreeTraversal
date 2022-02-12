@@ -11,7 +11,7 @@ find_package(SFML CONFIG REQUIRED COMPONENTS graphics system window)
 find_package(ImGui-SFML CONFIG REQUIRED)
 
 # Add source to this project's executable.
-add_executable (TreeTraversal "TreeTraversal.cpp" "TreeTraversal.h")
+add_executable (TreeTraversal "TreeTraversal.cpp" "TreeTraversal.h" "algorithms.cpp" "algorithms.h")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
     imgui::imgui

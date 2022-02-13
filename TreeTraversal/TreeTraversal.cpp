@@ -161,6 +161,11 @@ int main()
                 std::cout << '\n';
                 break;
             case 1:
+                visited = breadthFirst(adjacencyList, 1);
+                for (auto& f : visited) {
+                    std::cout << f << ' ';
+                }
+                std::cout << '\n';
                 break;
             }
         }

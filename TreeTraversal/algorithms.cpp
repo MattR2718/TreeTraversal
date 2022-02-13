@@ -1,33 +1,6 @@
 #include "algorithms.h"
 
-
-/*
-def findNeighbour(c, visited):
-  r = None
-  for n in graph[c]:
-    if n not in visited:
-      r = n
-  return r
-
-def dft(graph, start):
-  visited = []
-  stack = []
-  visited.append(start) #add A to visited
-
-  stack.append(start)
-  while len(stack) > 0:
-    nextNode = findNeighbour(stack[len(stack)-1], visited)
-    if not nextNode == None:
-      if nextNode not in visited:
-        visited.append(nextNode)
-      stack.append(nextNode)
-    else:
-      stack.pop()
-    print(stack)
-  return visited
-*/
-
-int findNeighbours(int& c, std::vector<int>& visited, std::map<int, std::vector<int>>& adjacencyList) {
+int findNeighboursDF(int& c, std::vector<int>& visited, std::map<int, std::vector<int>>& adjacencyList) {
     std::cout << c << '\n';
     if (c == 0) {
         std::cout << "0 IN NEIGHBOURS\n";
@@ -48,7 +21,7 @@ std::vector<int> depthFirst(std::map<int, std::vector<int>>& adjacencyList, int 
     stack.push(start);
 
     while (stack.size() > 0) {
-        int nextNode = findNeighbours(stack.top(), visited, adjacencyList);
+        int nextNode = findNeighboursDF(stack.top(), visited, adjacencyList);
         //std::cout << nextNode << '\n';
         if (nextNode != -1) {
             if (nextNode) {
@@ -67,7 +40,40 @@ std::vector<int> depthFirst(std::map<int, std::vector<int>>& adjacencyList, int 
 	return visited;
 }
 
+
+
+std::vector<int> findNeighboursBF(int& c, std::vector<int>& visited, std::map<int, std::vector<int>>& adjacencyList) {
+    std::vector<int> n;
+    for (auto& g : adjacencyList[c]) {
+        if (!std::count(visited.begin(), visited.end(), g)) {
+            n.push_back(g);
+        }
+    }
+    return n;
+}
+
 std::vector<int> breadthFirst(std::map<int, std::vector<int>>& adjacencyList, int start)
 {
-	return std::vector<int>();
+    std::vector<int> visited;
+    std::queue<int> queue;
+    queue.push(start);
+
+    while (visited.size() < adjacencyList.size()) {
+        int node = queue.front();
+        queue.pop();
+        visited.push_back(node);
+        std::vector<int> neighbours = findNeighboursBF(node, visited, adjacencyList);
+        for (auto& n : neighbours) {
+            queue.push(n);
+        }
+
+    }
+
+	return visited;
 }
+
+/*TODO
+* Sometimes get 0 going into findNeighboirsDF which breaks
+* Clearing Nodes and restarting doesn't work 
+*   Gets vector subscript out of range
+*/

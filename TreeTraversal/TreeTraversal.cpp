@@ -15,7 +15,7 @@ int insideNode(std::vector<std::tuple<int, int, int>>& nodes, sf::Vector2i& pos,
             return std::get<0>(node);
         }
     }
-    return 0;
+    return -1;
 }
 
 sf::Color makeColour(float colour[3]) {
@@ -24,14 +24,22 @@ sf::Color makeColour(float colour[3]) {
 
 void cleanList(std::map<int, std::vector<int>>& adjacencyList, int& nodeIn, std::vector<std::tuple<int, int, int>> nodes) {
     adjacencyList.erase(nodeIn);
+    //std::cout << "6\n";
     for (auto& node : nodes) {
-        if (adjacencyList[std::get<0>(node)][0] == nodeIn) {
-            adjacencyList[std::get<0>(node)].erase(adjacencyList[std::get<0>(node)].begin());
-        }
-        else if ((adjacencyList[std::get<0>(node)].size() == 2) && (adjacencyList[std::get<0>(node)][1] == nodeIn)) {
-            adjacencyList[std::get<0>(node)].erase(adjacencyList[std::get<0>(node)].begin() + 1);
+        //std::cout << "6.5\n";
+        //std::cout << "NODEIN: " << nodeIn << "NODEINDEX" << std::get<0>(node) << '\n';
+        if (std::get<0>(node) == nodeIn) {
+            if (adjacencyList[std::get<0>(node)][0] == nodeIn) {
+                //std::cout << "7\n";
+                adjacencyList[std::get<0>(node)].erase(adjacencyList[std::get<0>(node)].begin());
+            }
+            else if ((adjacencyList[std::get<0>(node)].size() == 2) && (adjacencyList[std::get<0>(node)][1] == nodeIn)) {
+                //std::cout << "8\n";
+                adjacencyList[std::get<0>(node)].erase(adjacencyList[std::get<0>(node)].begin() + 1);
+            }
         }
     }
+    //std::cout << "8\n";
 }
 
 void connectNodes(int connect[2], std::map<int, std::vector<int>>& adjacencyList) {
@@ -49,13 +57,19 @@ std::pair<int, int> getCoords(std::vector<std::tuple<int, int, int>>& nodes, int
     return std::make_pair(-1, -1);
 }
 
+void reset(std::vector<std::tuple<int, int, int>>& nodes, std::map<int, std::vector<int>>& adjacencyList, int& nodeIndex) {
+    nodes = std::vector<std::tuple<int, int, int>>{};
+    adjacencyList = std::map<int, std::vector<int>>{};
+    nodeIndex = 0;
+}
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 800), "Tree Traversal");
     ImGui::SFML::Init(window);
 
     std::vector<std::tuple<int, int, int>> nodes;
-    int nodeIndex = 1;
+    int nodeIndex = 0;
     std::map<int, std::vector<int>> adjacencyList;
     std::vector<int> visited;
 
@@ -87,20 +101,26 @@ int main()
                 window.close();
             }
             else if ((!running) && (coolDown > 100) && (sf::Mouse::isButtonPressed(sf::Mouse::Right))) {
+                //std::cout << "MOUSE PRESSED\n";
                 sf::Vector2i pos = sf::Mouse::getPosition(window);
-                if (!insideNode(nodes, pos, nodeRadius, true)) {
+                if (insideNode(nodes, pos, nodeRadius, true) == -1) {
                     std::tuple<int, int, int> temp = { nodeIndex, pos.x, pos.y};
                     nodeIndex++;
                     nodes.push_back(temp);
                 }
                 else {
                     int nodeIn = insideNode(nodes, pos, nodeRadius, false);
-                    if (nodeIn > 0) {
+                    if (nodeIn > -1) {
+                        //std::cout << "1\n";
                         for (int i = 0; i < nodes.size(); i++) {
+                            //std::cout << "2\n";
                             if (nodeIn == std::get<0>(nodes[i])) {
+                                //std::cout << "3\n";
                                 nodes.erase(nodes.begin() + i);
+                                //std::cout << "4\n";
                                 cleanList(adjacencyList, nodeIn, nodes);
-                                nodeIndex = 1;
+                                //std::cout << "5\n";
+                                //nodeIndex = 0;
                                 upto = 0;
                                 at = 0;
                             }
@@ -109,7 +129,7 @@ int main()
                 }
                 coolDown = 0;
             }
-            else if ((!running) && (sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
+            else if ((!running) && (coolDown > 100) && (sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
                 sf::Vector2i pos = sf::Mouse::getPosition(window);
                 int nodeIn = insideNode(nodes, pos, nodeRadius, false);
                 if (connect[0] == -1) {
@@ -139,10 +159,8 @@ int main()
         ImGui::ColorEdit3("Background Colour", bgColour);
         ImGui::ColorEdit3("Visiting Colour", visitColour);
         if (ImGui::Button("Clear All Nodes")) {
-            nodes = std::vector<std::tuple<int, int, int>>{};
-            adjacencyList = std::map<int, std::vector<int>>{};
+            reset(nodes, adjacencyList, nodeIndex);
             running = false;
-            nodeIndex = 1;
         }
         ImGui::End();
 
@@ -154,14 +172,14 @@ int main()
             running = true;
             switch (item_current) {
             case 0:
-                visited = depthFirst(adjacencyList, 1);
+                visited = depthFirst(adjacencyList, 0);
                 for (auto& f : visited) {
                     std::cout << f << ' ';
                 }
                 std::cout << '\n';
                 break;
             case 1:
-                visited = breadthFirst(adjacencyList, 1);
+                visited = breadthFirst(adjacencyList, 0);
                 for (auto& f : visited) {
                     std::cout << f << ' ';
                 }
@@ -189,6 +207,7 @@ int main()
             shape.setFillColor(makeColour(visitColour));
             shape.setOrigin(r, r);
             shape.setRadius(r);
+            shape.setPointCount(circleSegments);
             for (int i = 0; i < upto + 1; i++) {
                 for (auto& node : nodes) {
                     if (std::get<0>(node) == visited[i]) {

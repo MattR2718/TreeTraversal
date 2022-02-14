@@ -1,15 +1,21 @@
 #include "algorithms.h"
 
+
+
 int findNeighboursDF(int& c, std::vector<int>& visited, std::map<int, std::vector<int>>& adjacencyList) {
-    std::cout << c << '\n';
+    /*std::cout << c << '\n';
     if (c == 0) {
         std::cout << "0 IN NEIGHBOURS\n";
-    }
+    }*/
+    //std::cout << c << '\n';
     for (auto& n : adjacencyList[c]) {
         if (!std::count(visited.begin(), visited.end(), n)) {
             return n;
+            //std::cout << "N " << n << '\n';
         }
+        //std::cout << "LOOP\n";
     }
+    //std::cout << "DOESN'T EXIST\n";
     return -1;
 }
 
@@ -22,11 +28,9 @@ std::vector<int> depthFirst(std::map<int, std::vector<int>>& adjacencyList, int 
 
     while (stack.size() > 0) {
         int nextNode = findNeighboursDF(stack.top(), visited, adjacencyList);
-        //std::cout << nextNode << '\n';
+        std::cout << nextNode << '\n';
         if (nextNode != -1) {
-            if (nextNode) {
-                visited.push_back(nextNode);
-            }
+            visited.push_back(nextNode);
             stack.push(nextNode);
         }
         else {
@@ -72,8 +76,4 @@ std::vector<int> breadthFirst(std::map<int, std::vector<int>>& adjacencyList, in
 	return visited;
 }
 
-/*TODO
-* Sometimes get 0 going into findNeighboirsDF which breaks
-* Clearing Nodes and restarting doesn't work 
-*   Gets vector subscript out of range
-*/
+//If root node deleted, traversal does not work as assuming rootIndex 0 as root which can be deleted

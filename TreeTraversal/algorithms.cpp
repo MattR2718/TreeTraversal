@@ -1,6 +1,13 @@
 #include "algorithms.h"
 
-
+/*
+void printMap(std::map<int, std::vector<int>>& adjacencyList) {
+    for (auto& e = adjacencyList.cbegin(); e != adjacencyList.cend(); e++) {
+        if (e->first) {
+            std::cout << e->first << '\n';
+        }
+    }
+}*/
 
 int findNeighboursDF(int& c, std::vector<int>& visited, std::map<int, std::vector<int>>& adjacencyList) {
     /*std::cout << c << '\n';
@@ -76,4 +83,23 @@ std::vector<int> breadthFirst(std::map<int, std::vector<int>>& adjacencyList, in
 	return visited;
 }
 
+std::vector<int> preOrder(std::map<int, std::vector<int>>& adjacencyList, int start, std::vector<int>& visited) {
+    //std::cout << "PREORDER\n";
+    std::cout << adjacencyList[start][0] << '\n';
+    if (!std::count(visited.begin(), visited.end(), start)) {
+        visited.push_back(start);
+    }
+    if (adjacencyList[start].size() >= 1) {
+        preOrder(adjacencyList, adjacencyList[start][0], visited);
+    }
+    if (adjacencyList[start].size() == 2) {
+        preOrder(adjacencyList, adjacencyList[start][1], visited);
+    }
+
+    
+    return visited;
+}
+
+
+//TODO
 //If root node deleted, traversal does not work as assuming rootIndex 0 as root which can be deleted

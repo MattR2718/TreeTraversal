@@ -165,27 +165,28 @@ int main()
         ImGui::End();
 
         ImGui::Begin("Algorithms");
-        const char* items[] = { "Depth First", "Breadth First" };
+        const char* items[] = { "Depth First", "Breadth First", "Preorder"};
         static int item_current = 0;
         ImGui::ListBox("listbox", &item_current, items, IM_ARRAYSIZE(items), (int)(sizeof(items) / sizeof(*items)));
         if (ImGui::Button("Traverse")) {
             running = true;
+            visited.clear();
             switch (item_current) {
             case 0:
                 visited = depthFirst(adjacencyList, 0);
-                for (auto& f : visited) {
-                    std::cout << f << ' ';
-                }
-                std::cout << '\n';
                 break;
             case 1:
                 visited = breadthFirst(adjacencyList, 0);
-                for (auto& f : visited) {
-                    std::cout << f << ' ';
-                }
-                std::cout << '\n';
+                break;
+            case 2:
+                //std::cout << "TETETET\n";
+                preOrder(adjacencyList, 0, visited);
                 break;
             }
+            for (auto& f : visited) {
+                std::cout << f << ' ';
+            }
+            std::cout << '\n';
         }
         ImGui::End();
 
